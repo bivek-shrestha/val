@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Be My Valentine 💘</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Georgia", serif;
+        background: radial-gradient(circle at top, #ff6b81, #b83260);
+        color: white;
+        text-align: center;
+        overflow-x: hidden;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .container {
+        position: relative;
+        max-width: 720px;
+        width: 100%;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 6vw, 3rem);
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-size: clamp(1.4rem, 5vw, 2rem);
+        margin-top: 20px;
+      }
+
+      p {
+        font-size: clamp(1rem, 4.5vw, 1.35rem);
+        min-height: 120px;
+        line-height: 1.6;
+      }
+
+      .buttons {
+        margin-top: 25px;
+        position: relative;
+        height: 160px;
+      }
+
+      button {
+        font-size: clamp(1rem, 4.5vw, 1.2rem);
+        padding: 14px 28px;
+        margin: 10px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      #yes {
+        background: #fff;
+        color: #ff3366;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+        position: relative;
+        z-index: 2;
+      }
+
+      #no {
+        background: rgba(255, 255, 255, 0.25);
+        color: white;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 1;
+      }
+
+      .hidden {
+        display: none;
+      }
+
+      .hearts {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        top: 0;
+        left: 0;
+      }
+
+      .heart {
+        position: absolute;
+        font-size: 22px;
+        animation: float 6s linear infinite;
+      }
+
+      @keyframes float {
+        from {
+          transform: translateY(100vh) scale(1);
+          opacity: 1;
+        }
+        to {
+          transform: translateY(-10vh) scale(1.5);
+          opacity: 0;
+        }
+      }
+
+      .music {
+        position: fixed;
+        bottom: 12px;
+        right: 12px;
+        font-size: 0.85rem;
+        opacity: 0.85;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container" id="main">
+      <h1>My Love ❤️</h1>
+      <p id="typewriter"></p>
+
+      <h2 id="question" class="hidden">Will you be my Valentine?</h2>
+
+      <div class="buttons" id="buttonArea">
+        <button id="yes" class="hidden">Yes 💕</button>
+        <button id="no" class="hidden">No 😏</button>
+      </div>
+    </div>
+
+    <div class="container hidden" id="success">
+      <h1>You have my whole heart 💖</h1>
+      <p>
+        Loving you is my favorite thing I’ve ever done.
+        <br /><br />
+        And I’d choose you—
+        <br />
+        on the loud days,
+        <br />
+        on the quiet nights,
+        <br />
+        and on every ordinary moment in between.
+      </p>
+    </div>
+
+    <div class="hearts" id="hearts"></div>
+
+    <div class="music" id="musicToggle">🎵 Music: Off</div>
+
+    <audio id="bgMusic" loop>
+      <source
+        src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b9e8c5f4.mp3"
+        type="audio/mpeg"
+      />
+    </audio>
+
+    <script>
+      const text = [
+        "Hey beautiful.",
+        "",
+        "I hope you know this—",
+        "but you are my favorite part of every day.",
+        "",
+        "In a world that moves too fast,",
+        "you are my calm.",
+        "",
+        "So today, and every day after…",
+        "I just want to ask you one thing.",
+      ];
+
+      const noMessages = [
+        "No? 🥺",
+        "Hey… be nice 😘",
+        "Are you sure?",
+        "That button is cursed…",
+        "Okay okay 😏",
+        "You know it's yes 💕",
+      ];
+
+      const writer = document.getElementById("typewriter");
+      const question = document.getElementById("question");
+      const yesBtn = document.getElementById("yes");
+      const noBtn = document.getElementById("no");
+      const buttonArea = document.getElementById("buttonArea");
+      const main = document.getElementById("main");
+      const success = document.getElementById("success");
+      const hearts = document.getElementById("hearts");
+
+      let line = 0;
+      let char = 0;
+      let noCount = 0;
+
+      function typeLine() {
+        if (line < text.length) {
+          if (char < text[line].length) {
+            writer.innerHTML += text[line].charAt(char);
+            char++;
+            setTimeout(typeLine, 45);
+          } else {
+            writer.innerHTML += "<br><br>";
+            line++;
+            char = 0;
+            setTimeout(typeLine, 650);
+          }
+        } else {
+          question.classList.remove("hidden");
+          yesBtn.classList.remove("hidden");
+          noBtn.classList.remove("hidden");
+        }
+      }
+
+      typeLine();
+
+      /* 🔒 NO OVERLAP FIX */
+      function dodgeAndBeg() {
+        const area = buttonArea.getBoundingClientRect();
+        const yesRect = yesBtn.getBoundingClientRect();
+
+        let x, y;
+
+        do {
+          x = 35 * (area.width - noBtn.offsetWidth);
+          y = Math.random() * (area.height - noBtn.offsetHeight);
+        } while (
+          x + noBtn.offsetWidth > yesRect.left - area.left &&
+          x < yesRect.right - area.left &&
+          y + noBtn.offsetHeight > yesRect.top - area.top &&
+          y < yesRect.bottom - area.top
+        );
+
+        noBtn.style.left = x + "px";
+        noBtn.style.top = y + "px";
+
+        noBtn.textContent =
+          noMessages[Math.min(noCount, noMessages.length - 1)];
+        noCount++;
+      }
+
+      noBtn.addEventListener("touchstart", dodgeAndBeg);
+      noBtn.addEventListener("click", dodgeAndBeg);
+
+      yesBtn.addEventListener("click", () => {
+        main.classList.add("hidden");
+        success.classList.remove("hidden");
+      });
+    </script>
+  </body>
+</html>
