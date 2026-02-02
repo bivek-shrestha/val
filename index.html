@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Be My Valentine 💘</title>
+    <title>Be My Valentine 💘 Budi</title>
 
     <style>
       * {
@@ -33,6 +33,7 @@
       h1 {
         font-size: clamp(2rem, 6vw, 3rem);
         margin-bottom: 10px;
+        animation: fadeIn 1.5s ease;
       }
 
       h2 {
@@ -49,7 +50,7 @@
       .buttons {
         margin-top: 25px;
         position: relative;
-        height: 160px;
+        height: 140px;
       }
 
       button {
@@ -66,17 +67,19 @@
         background: #fff;
         color: #ff3366;
         box-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
-        position: relative;
-        z-index: 2;
+      }
+
+      #yes:active {
+        transform: scale(1.4);
       }
 
       #no {
         background: rgba(255, 255, 255, 0.25);
         color: white;
         position: absolute;
+        top: 90px;
         left: 50%;
         transform: translateX(-50%);
-        z-index: 1;
       }
 
       .hidden {
@@ -109,6 +112,17 @@
         }
       }
 
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       .music {
         position: fixed;
         bottom: 12px;
@@ -122,19 +136,19 @@
 
   <body>
     <div class="container" id="main">
-      <h1>My Love ❤️</h1>
+      <h1>My Love ❤️, Brisha</h1>
       <p id="typewriter"></p>
 
       <h2 id="question" class="hidden">Will you be my Valentine?</h2>
 
-      <div class="buttons" id="buttonArea">
+      <div class="buttons">
         <button id="yes" class="hidden">Yes 💕</button>
         <button id="no" class="hidden">No 😏</button>
       </div>
     </div>
 
     <div class="container hidden" id="success">
-      <h1>You have my whole heart 💖</h1>
+      <h1>You have my whole heart 💖 budu</h1>
       <p>
         Loving you is my favorite thing I’ve ever done.
         <br /><br />
@@ -152,11 +166,14 @@
 
     <div class="music" id="musicToggle">🎵 Music: Off</div>
 
+    <!-- Soft background music -->
     <audio id="bgMusic" loop>
-      <source
-        src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8b9e8c5f4.mp3"
-        type="audio/mpeg"
-      />
+      <source src="romantic.mp3" type="audio/mpeg" />
+    </audio>
+
+    <!-- Nazm Nazm (ADD YOUR OWN MP3 FILE) -->
+    <audio id="nazmNazm" loop>
+      <source src="nazm.mp3" type="audio/mpeg" />
     </audio>
 
     <script>
@@ -169,6 +186,10 @@
         "In a world that moves too fast,",
         "you are my calm.",
         "",
+        "You are my best friend,",
+        "my greatest adventure,",
+        "and my forever favorite person.",
+        "",
         "So today, and every day after…",
         "I just want to ask you one thing.",
       ];
@@ -177,19 +198,23 @@
         "No? 🥺",
         "Hey… be nice 😘",
         "Are you sure?",
-        "That button is cursed…",
-        "Okay okay 😏",
-        "You know it's yes 💕",
+        "That button looks suspicious…",
+        "Okay but I’m charming 😏",
+        "You married me 😌",
+        "Just say yes 💕",
       ];
 
       const writer = document.getElementById("typewriter");
       const question = document.getElementById("question");
       const yesBtn = document.getElementById("yes");
       const noBtn = document.getElementById("no");
-      const buttonArea = document.getElementById("buttonArea");
       const main = document.getElementById("main");
       const success = document.getElementById("success");
       const hearts = document.getElementById("hearts");
+
+      const music = document.getElementById("bgMusic");
+      const nazm = document.getElementById("nazmNazm");
+      const musicToggle = document.getElementById("musicToggle");
 
       let line = 0;
       let char = 0;
@@ -205,7 +230,7 @@
             writer.innerHTML += "<br><br>";
             line++;
             char = 0;
-            setTimeout(typeLine, 650);
+            setTimeout(typeLine, 600);
           }
         } else {
           question.classList.remove("hidden");
@@ -216,37 +241,51 @@
 
       typeLine();
 
-      /* 🔒 NO OVERLAP FIX */
-      function dodgeAndBeg() {
-        const area = buttonArea.getBoundingClientRect();
-        const yesRect = yesBtn.getBoundingClientRect();
-
-        let x, y;
-
-        do {
-          x = 35 * (area.width - noBtn.offsetWidth);
-          y = Math.random() * (area.height - noBtn.offsetHeight);
-        } while (
-          x + noBtn.offsetWidth > yesRect.left - area.left &&
-          x < yesRect.right - area.left &&
-          y + noBtn.offsetHeight > yesRect.top - area.top &&
-          y < yesRect.bottom - area.top
-        );
-
+      function dodgeNo() {
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 150);
         noBtn.style.left = x + "px";
         noBtn.style.top = y + "px";
-
-        noBtn.textContent =
-          noMessages[Math.min(noCount, noMessages.length - 1)];
+        noBtn.textContent = noMessages[noCount % noMessages.length];
         noCount++;
       }
 
-      noBtn.addEventListener("touchstart", dodgeAndBeg);
-      noBtn.addEventListener("click", dodgeAndBeg);
+      noBtn.addEventListener("click", dodgeNo);
+      noBtn.addEventListener("touchstart", dodgeNo);
 
       yesBtn.addEventListener("click", () => {
         main.classList.add("hidden");
         success.classList.remove("hidden");
+
+        music.pause();
+        music.currentTime = 0;
+
+        nazm.play();
+        musicToggle.textContent = "🎵 Now playing: Nazm Nazm 💖";
+
+        launchHearts();
+      });
+
+      function launchHearts() {
+        setInterval(() => {
+          const heart = document.createElement("div");
+          heart.className = "heart";
+          heart.textContent = "❤️";
+          heart.style.left = Math.random() * 100 + "vw";
+          heart.style.animationDuration = Math.random() * 3 + 3 + "s";
+          hearts.appendChild(heart);
+          setTimeout(() => heart.remove(), 6000);
+        }, 250);
+      }
+
+      musicToggle.addEventListener("click", () => {
+        if (music.paused && nazm.paused) {
+          music.play();
+          musicToggle.textContent = "🎵 Music: On";
+        } else {
+          music.pause();
+          musicToggle.textContent = "🎵 Music: Off";
+        }
       });
     </script>
   </body>
